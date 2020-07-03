@@ -3,6 +3,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const mongoose = require("mongoose")
  
 const app = express();
  
@@ -15,6 +16,8 @@ app.set("view engine", "ejs");
 app.get('/', (req, res) => {
   res.render('home');
 });
+
+mongoose.connect("mongodb://localhost:27017/userDB", {userNewUrlParser: true})
  
 app.get('/login', (req, res) => {
   res.render('login');
