@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose")
+const encrypt = require('mongoose-encryption')
  
 const app = express();
  
@@ -15,10 +16,17 @@ app.set("view engine", "ejs");
  
 mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true, useUnifiedTopology: true } )
 
-const userSchema = {
+// Object created from mongoose schema class
+const userSchema = new mongoose.Schema ({
   email: String,
   password: String
-}
+})
+
+// Normaly this would be process.env.SOME_LONG_UNGUESSABLE_STRING
+const secret = "Thisisourlittlesecret."
+// Add encrypt package as plugin
+userSchema.plugin(encrypt, { secret: secret, encryptedFields: ['password'] })
+ 
 
 const User = new mongoose.model("User", userSchema)
 
@@ -41,7 +49,7 @@ app.post("/register", function(req, res){
     password: req.body.password
   })
 
-  newUser.save(function(err){
+  newUser.save(function(err){  // Mongoose will auto encrypt password fields
     if (err) {
       console.log(err)
     } else {
