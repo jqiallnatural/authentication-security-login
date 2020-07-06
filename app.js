@@ -52,7 +52,7 @@ app.post("/register", function (req, res) {
     // Store hash in your password DB.
     const newUser = new User({
       email: req.body.username,
-      password: hash
+      password: hash,
     });
 
     newUser.save(function (err) {
@@ -68,21 +68,21 @@ app.post("/register", function (req, res) {
 
 app.post("/login", function (req, res) {
   const username = req.body.username;
-  const password = req.body.password
+  const password = req.body.password;
 
   User.findOne({ email: username }, function (err, foundUser) {
     if (err) {
       console.log(err);
     } else {
       if (foundUser) {
-        bcrypt.compare(password, foundUser.password, function(result) {
-          if (result === true){
+        bcrypt.compare(password, foundUser.password, function (err, result) {
+          if (result === true) {
             res.render("secrets");
           }
-      });
-        }
+        });
       }
-    })
+    }
   });
+});
 
 app.listen(port, () => console.log(`Server started at port: ${port}`));
